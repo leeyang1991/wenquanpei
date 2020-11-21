@@ -67,10 +67,41 @@ class TMP:
         # 1 load is_pix_in_shp_to_dic
         self.pix_in_shp_dic = self.load_is_pix_in_shp()
         # self.cal_dir_mean()
-        self.text_dir_to_tif()
+        # self.text_dir_to_tif()
+        self.mask_txt()
 
         pass
 
+
+    def mask_txt(self):
+        pix_in_shp_dic = self.pix_in_shp_dic
+        out_dir = self.this_root_arr + 'mask_txt\\' + self.tmp_dir.split('\\')[-3] + '\\'
+        # print out_dir
+        Shp_Tools().mk_dir(out_dir, force=True)
+        for folder in os.listdir(self.tmp_dir):
+            print folder
+            dir_i = os.path.join(self.tmp_dir, folder) + '\\'
+            outdir_i = out_dir + folder + '\\'
+            Shp_Tools().mk_dir(outdir_i, force=False)
+            for f in os.listdir(dir_i):
+
+                txt_f = dir_i + f
+                outf = outdir_i + f
+                print outf
+                fw = open(outf,'w')
+                fr = open(txt_f, 'r')
+                lines = fr.readlines()
+                flag = 0
+                for line in lines:
+                    flag += 1
+                    line_split = line.split()
+                    lon = float(line_split[0])
+                    lat = float(line_split[1])
+                    pix = (lon, lat)
+                    if self.pix_in_shp_dic[pix]:
+                        fw.write(line)
+                fw.close()
+                # exit()
 
     def text_dir_to_tif(self):
 
@@ -230,8 +261,37 @@ class Pre:
         self.pix_in_shp_dic = self.load_is_pix_in_shp()
         # 1 cal_dir_mean
         # self.cal_dir_mean()
-        # 2
-        self.text_dir_to_tif()
+        # 2 text_dir_to_tif
+        # self.text_dir_to_tif()
+        # 3 mask txt
+        self.mask_txt()
+
+    def mask_txt(self):
+        work_dir = self.pre_dir2
+        out_dir = self.this_root_arr + 'mask_txt\\' + work_dir.split('\\')[-3] + '\\'
+        print out_dir
+        Shp_Tools().mk_dir(out_dir, force=True)
+        for f in os.listdir(work_dir):
+            txt_f = work_dir + f
+            outf = out_dir + f
+            print outf
+            fw = open(outf, 'w')
+            fr = open(txt_f, 'r')
+            lines = fr.readlines()
+            flag = 0
+            for line in lines:
+                flag += 1
+                line_split = line.split()
+                lon = float(line_split[0])
+                lat = float(line_split[1])
+                pix = (lon, lat)
+                if self.pix_in_shp_dic[pix]:
+                    fw.write(line)
+            fw.close()
+
+
+        pass
+
 
     def text_dir_to_tif(self):
 
