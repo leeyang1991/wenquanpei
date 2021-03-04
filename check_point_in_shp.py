@@ -63,7 +63,7 @@ class TMP:
 
     def run(self):
         # 0 prepare is_pix_in_shp_to_dic
-        # self.is_pix_in_shp_to_dic()
+        self.is_pix_in_shp_to_dic()
         # 1 load is_pix_in_shp_to_dic
         self.pix_in_shp_dic = self.load_is_pix_in_shp()
         # self.cal_dir_mean()
