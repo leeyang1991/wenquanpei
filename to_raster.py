@@ -1,10 +1,12 @@
 # coding=utf-8
 
-import osr, ogr
-import gdal
+# import osr, ogr
+from osgeo import osr
+from osgeo import ogr
+from osgeo import gdal
+# import gdal
 import numpy as np
 import os
-from osgeo import gdalconst
 
 this_root = os.path.dirname(__file__)
 
@@ -30,7 +32,61 @@ def raster2array(rasterfn):
 
 
 
-def array2raster(newRasterfn,longitude_start,latitude_start,pixelWidth,pixelHeight,array):
+def array2raster_GDT_Byte(newRasterfn,longitude_start,latitude_start,pixelWidth,pixelHeight,array):
+    cols = array.shape[1]
+    rows = array.shape[0]
+    originX = longitude_start
+    originY = latitude_start
+    # open geotiff
+    driver = gdal.GetDriverByName('GTiff')
+    if os.path.exists(newRasterfn):
+        os.remove(newRasterfn)
+    outRaster = driver.Create(newRasterfn, cols, rows, 1, gdal.GDT_Byte)
+    # Add Color Table
+    # outRaster.GetRasterBand(1).SetRasterColorTable(ct)
+    outRaster.SetGeoTransform((originX, pixelWidth, 0, originY, 0, pixelHeight))
+    # Write Date to geotiff
+    outband = outRaster.GetRasterBand(1)
+    ndv = 255
+    outband.SetNoDataValue(ndv)
+    outband.WriteArray(array)
+    outRasterSRS = osr.SpatialReference()
+    outRasterSRS.ImportFromEPSG(4326)
+    outRaster.SetProjection(outRasterSRS.ExportToWkt())
+    # Close Geotiff
+    outband.FlushCache()
+    del outRaster
+
+def array2raster(newRasterfn,longitude_start,latitude_start,pixelWidth,pixelHeight,array,ndv = -999999):
+    cols = array.shape[1]
+    rows = array.shape[0]
+    originX = longitude_start
+    originY = latitude_start
+    # open geotiff
+    driver = gdal.GetDriverByName('GTiff')
+    if os.path.exists(newRasterfn):
+        os.remove(newRasterfn)
+    outRaster = driver.Create(newRasterfn, cols, rows, 1, gdal.GDT_Float32)
+    # outRaster = driver.Create(newRasterfn, cols, rows, 1, gdal.GDT_UInt16)
+    # ndv = 255
+    # Add Color Table
+    # outRaster.GetRasterBand(1).SetRasterColorTable(ct)
+    outRaster.SetGeoTransform((originX, pixelWidth, 0, originY, 0, pixelHeight))
+    # Write Date to geotiff
+    outband = outRaster.GetRasterBand(1)
+
+    outband.SetNoDataValue(ndv)
+    outband.WriteArray(array)
+    outRasterSRS = osr.SpatialReference()
+    outRasterSRS.ImportFromEPSG(4326)
+    outRaster.SetProjection(outRasterSRS.ExportToWkt())
+    # Close Geotiff
+    outband.FlushCache()
+    del outRaster
+
+
+
+def array2raster_polar(newRasterfn,longitude_start,latitude_start,pixelWidth,pixelHeight,array,ndv = -999999):
     cols = array.shape[1]
     rows = array.shape[0]
     originX = longitude_start
@@ -45,62 +101,32 @@ def array2raster(newRasterfn,longitude_start,latitude_start,pixelWidth,pixelHeig
     outRaster.SetGeoTransform((originX, pixelWidth, 0, originY, 0, pixelHeight))
     # Write Date to geotiff
     outband = outRaster.GetRasterBand(1)
-    ndv = -999999
+
+
+
+
+
     outband.SetNoDataValue(ndv)
     outband.WriteArray(array)
-    outRasterSRS = osr.SpatialReference()
-    outRasterSRS.ImportFromEPSG(4326)
-    outRaster.SetProjection(outRasterSRS.ExportToWkt())
-    # Close Geotiff
+    # outRasterSRS.ImportFromEPSG(4326)
+    # outRaster.SetProjection(outRasterSRS.ExportToWkt())
+    # ref = osr.SpatialReference()
+    # outRasterSRS = osr.SpatialReference()
+    # ref_chr = r"PROJCS[\"NSIDC EASE-Grid North\",GEOGCS[\"Unspecified datum based upon the International 1924 Authalic Sphere\",DATUM[\"Not_specified_based_on_International_1924_Authalic_Sphere\",SPHEROID[\"International 1924 Authalic Sphere\",6371228,0,AUTHORITY[\"EPSG\",\"7057\"]],TOWGS84[-9036842.762,25067.525,0,9036842.763000002,0,-25067.525],AUTHORITY[\"EPSG\",\"6053\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4053\"]],PROJECTION[\"Lambert_Azimuthal_Equal_Area\"],PARAMETER[\"latitude_of_center\",90],PARAMETER[\"longitude_of_center\",0],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH],AUTHORITY[\"EPSG\",\"3408\"]]"
+    # ref_chr = r'PROJCS["Grenada 1953 / British West Indies Grid",GEOGCS["Grenada 1953",DATUM["Grenada_1953",SPHEROID["Clarke 1880 (RGS)",6378249.145,293.465,AUTHORITY["EPSG","7012"]],TOWGS84[72,213.7,93,0,0,0,0],AUTHORITY["EPSG","6603"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4603"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-62],PARAMETER["scale_factor",0.9995],PARAMETER["false_easting",400000],PARAMETER["false_northing",0],AUTHORITY["EPSG","2003"],AXIS["Easting",EAST],AXIS["Northing",NORTH]]'
+    # ref_chr = r'PROJCS["North_Pole_Lambert_Azimuthal_Equal_Area",GEOGCS["GCS_WGS_1984",DATUM["WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Lambert_Azimuthal_Equal_Area"],PARAMETER["False_Easting",0],PARAMETER["False_Northing",0],PARAMETER["Central_Meridian",0],PARAMETER["Latitude_Of_Origin",90],UNIT["Meter",1],AUTHORITY["EPSG","9122"]]'
+    # ref_chr = "PROJCS['North_Pole_Lambert_Azimuthal_Equal_Area',GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Lambert_Azimuthal_Equal_Area'],PARAMETER['False_Easting',0.0],PARAMETER['False_Northing',0.0],PARAMETER['Central_Meridian',0.0],PARAMETER['Latitude_Of_Origin',90.0],UNIT['Meter',1.0]]"
+    # ref_chr = ref_chr.replace('\\','')
+    # print ref_chr
+    # "PROJCS['North_Pole_Lambert_Azimuthal_Equal_Area',GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Lambert_Azimuthal_Equal_Area'],PARAMETER['False_Easting',0.0],PARAMETER['False_Northing',0.0],PARAMETER['Central_Meridian',0.0],PARAMETER['Latitude_Of_Origin',90.0],UNIT['Meter',1.0]]"
+    # outRasterSRS.ImportFromWkt(ref_chr)
+    # print outRasterSRS
+    # outRaster.SetProjection(outRasterSRS.ExportToWkt())
+    # outRaster.SetProjection(ref_chr)
     outband.FlushCache()
     del outRaster
 
 
-def rasterize_shp(shp,output,x_min,y_min,x_res,y_res,pixel_width):
-    # tif = 'D:\\MODIS\\data_tif\\MOD11A2.006\\2003.01.09.LST_Day_1km.tif'
-    # shp = 'D:\\MODIS\\shp\\china_dissolve.shp'
-    # output = 'D:\\MODIS\\my.tif'
-
-    # data = gdal.Open(tif, gdalconst.GA_ReadOnly)
-    # geo_transform = data.GetGeoTransform()
-    #source_layer = data.GetLayer()
-    # x_min = 108
-    # x_max = x_min + geo_transform[1] * 0.25
-    # y_min = 24
-    # y_max = y_max + geo_transform[5] * 0.25
-    # x_res = 37
-    # y_res = 53
-    mb_v = ogr.Open(shp)
-    mb_l = mb_v.GetLayer()
-    # pixel_width = 0.25
-
-    target_ds = gdal.GetDriverByName('GTiff').Create(output, x_res, y_res, 1, gdal.GDT_Byte)
-    target_ds.SetGeoTransform((x_min, pixel_width, 0, y_min, 0, pixel_width))
-    band = target_ds.GetRasterBand(1)
-    NoData_value = -999999
-    band.SetNoDataValue(NoData_value)
-    band.FlushCache()
-    gdal.RasterizeLayer(target_ds, [1], mb_l)
-    # gdal.RasterizeLayer(target_ds, [1], mb_l, options=["ATTRIBUTE=hedgerow"])
-
-    target_ds = None
-
-
 if __name__ == '__main__':
-    arr = np.load(this_root+'/ERA/era_1_layer_mean.npy')[720-587:720-493,897:1079]
-    from matplotlib import pyplot as plt
-    # plt.imshow(arr)
-    # plt.show()
-    # exit()
-    new_arr = []
-    for i in arr:
-        temp = []
-        for j in i:
-            if not np.isnan(j) and j > 0:
-                temp.append(j)
-            else:
-                temp.append(-999999)
-        new_arr.append(temp)
-    new_arr = np.array(new_arr)
-    array2raster('era_1_layer_mean.tif',44.25,56.75,0.25,-0.25,new_arr)
+    pass
 
