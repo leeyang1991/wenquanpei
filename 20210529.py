@@ -11,14 +11,22 @@ def mk_dir(dir, force=False):
             os.mkdir(dir)
 
 def variables():
+    f = '/Volumes/SSD/wenq/给小李0526/要素.txt'
+    fr = open(f,'r')
+    line = fr.readline()
+    v_split = line.split()
 
-    v = 'rdays	maxnrdays	SUM	PCD	PCP	N	R90	R95	R99	Rx1d	' \
-        'Rx3d	Rx5d	Rx7d	Rx10d	Rx15d	Rx30d	特旱_spei	' \
-        '重旱_spei	中旱_spei	轻旱_spei	无旱_spei	特旱	重旱	' \
-        '中旱	轻旱	无旱	t	HDD0	HDD10	hdays0	hdays10	' \
-        'tmax	tmaxdays35	tmaxdays37'
+    # print(v_split)
+    # v = 'rdays	maxnrdays	SUM	PCD	PCP	N	R90	R95	R99	Rx1d	' \
+    #     'Rx3d	Rx5d	Rx7d	Rx10d	Rx15d	Rx30d	特旱_spei	' \
+    #     '重旱_spei	中旱_spei	轻旱_spei	无旱_spei	特旱	重旱	' \
+    #     '中旱	轻旱	无旱	t	HDD0	HDD10	hdays0	hdays10	' \
+    #     'tmax	tmaxdays35	tmaxdays37'
+    #
+    # v_split = v.split()
+    # print(v_split)
+    # exit()
 
-    v_split = v.split()
     return v_split
 
 
@@ -420,6 +428,7 @@ class Every_Model_time:
     def run(self):
 
         # self.historical()
+
         date_range_list = range(3)
         for product in ['SSP245','SSP585']:
             for region in ['shang','xia']:
@@ -664,7 +673,7 @@ def main():
     # Every_Model().run()
     # Every_Model_mean().run()
     # Every_Model_time().run()
-    Every_Model_time_mean().run()
+    # Every_Model_time_mean().run()
     pass
 
 
