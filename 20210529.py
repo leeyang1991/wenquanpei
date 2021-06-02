@@ -1,5 +1,11 @@
 # coding=utf-8
-from LY_Tools import *
+import sys
+version = sys.version_info.major
+assert version == 3, 'Python Version Error'
+import os
+from tqdm import tqdm
+import pandas as pd
+import codecs
 this_root = '/Volumes/SSD/wenq/给小李0526/'
 
 
@@ -75,7 +81,7 @@ class Every_Model:
 
 
         fdir = this_root + 'cmip6数据/historical/'
-        Tools().mk_dir(outdir,force=True)
+        mk_dir(outdir,force=True)
         for f in os.listdir(fdir):
             if f.startswith('.'):
                 continue
@@ -445,7 +451,7 @@ class Every_Model_time:
         outdir = this_root + 'result/historical/年代值/中下游/'
 
         fdir = this_root + 'cmip6数据/historical/'
-        Tools().mk_dir(outdir, force=True)
+        mk_dir(outdir, force=True)
         for f in os.listdir(fdir):
             if f.startswith('.'):
                 continue
@@ -457,7 +463,7 @@ class Every_Model_time:
             df = df[df['year']>=1995]
             df = df[df['year']<=2014]
 
-            # Tools().print_head_n(df,n=30)
+            # print_head_n(df,n=30)
             # exit()
             lon_list = df.lon
             lat_list = df.lat
@@ -511,7 +517,7 @@ class Every_Model_time:
         start,end = date_range_list[date_range]
 
         fdir = this_root + 'cmip6数据/{}/'.format(product)
-        Tools().mk_dir(outdir, force=True)
+        mk_dir(outdir, force=True)
         for f in os.listdir(fdir):
             if f.startswith('.'):
                 continue
@@ -523,7 +529,7 @@ class Every_Model_time:
             df = df[df['year']>=start]
             df = df[df['year']<=end]
 
-            # Tools().print_head_n(df,n=30)
+            # print_head_n(df,n=30)
             # exit()
             lon_list = df.lon
             lat_list = df.lat
@@ -581,7 +587,7 @@ class Every_Model_time_mean:
         fdir = this_root + 'result/historical/年代值/中下游/各模式/'
         outdir = this_root + 'result/historical/年代值/中下游/各模式平均/'
 
-        Tools().mk_dir(outdir, force=True)
+        mk_dir(outdir, force=True)
         outf = outdir + 'mean.csv'
         df_list = []
         for f in os.listdir(fdir):
@@ -592,7 +598,7 @@ class Every_Model_time_mean:
             df = pd.read_csv(fdir + f, encoding='gbk')
             df_list.append(df)
             # print(df.loc[0])
-            # Tools().print_head_n(df)
+            # print_head_n(df)
             # exit()
         all_indx_mean_list = []
         for i in tqdm(range(len(df_list[0]))):
@@ -635,7 +641,7 @@ class Every_Model_time_mean:
             raise UserWarning('region error')
         # print(outdir)
         # exit()
-        Tools().mk_dir(outdir)
+        mk_dir(outdir)
         outf = outdir + 'mean.csv'
         df_list = []
         for f in os.listdir(fdir):
@@ -646,7 +652,7 @@ class Every_Model_time_mean:
             df = pd.read_csv(fdir + f, encoding='gbk')
             df_list.append(df)
             # print(df.loc[0])
-            # Tools().print_head_n(df)
+            # print_head_n(df)
             # exit()
         all_indx_mean_list = []
         for i in tqdm(range(len(df_list[0]))):
@@ -670,10 +676,10 @@ class Every_Model_time_mean:
 
 
 def main():
-    # Every_Model().run()
-    # Every_Model_mean().run()
-    # Every_Model_time().run()
-    # Every_Model_time_mean().run()
+    Every_Model().run()
+    Every_Model_mean().run()
+    Every_Model_time().run()
+    Every_Model_time_mean().run()
     pass
 
 
