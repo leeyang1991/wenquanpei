@@ -11,7 +11,7 @@ import os
 import sys
 import optparse
 import csv
-import urllib2
+# import urllib2
 import xml.dom.minidom as dom
 import re
 import shapefile
@@ -36,7 +36,7 @@ def create_bufferxys(inputshp):
 	lastone = lenallpts-1
 	counter = 0
 	for (thisx,thisy) in allshps[0].shape.points:
-		print "counter is "+str(counter)
+		# print "counter is "+str(counter)
 		(nextx,nexty) = return_next(oldshplist, counter)
 		(prevx,prevy) = return_prev(oldshplist, counter)
 		firstangle = calculate_xyangle(prevx, prevy, thisx, thisy)
@@ -47,15 +47,15 @@ def create_bufferxys(inputshp):
 		(newptyr, newptxr) = pointRadialDistance(thisx, thisy, perpangletwo)
 		# now check if within the original poly
 		if check_xys_in_poly(newptxl, newptyl, poly):
-			print "point is in poly so not adding it"
+			print("point is in poly so not adding it")
 		else:
 			newshapelist.append(((float(newptxl), float(newptyl))))
 		if check_xys_in_poly(newptxr, newptyr, poly):
-			print "point is in poly so not adding it"
+			print("point is in poly so not adding it")
 		else:
 			newshapelist.append(((float(newptxr), float(newptyr))))
 		counter += 1
-	print "adding one more point to finish the polygon"
+	# print "adding one more point to finish the polygon"
 	do_debug("original shapefile in...")
 	do_debug("outgoing shapefile list of new shapes")
 	do_debug(str(len(newshapelist)))
@@ -92,7 +92,7 @@ def check_bufferxys(inputshp, x, y):
 
 def do_debug(texttoprint):
 	if DEBUG == "on":
-		print texttoprint
+		print(texttoprint)
 
 
 def get_poly(shpfile):
@@ -182,7 +182,7 @@ def write_to_shp(inputshplist, outputshp):
 
 def do_debug(texttoprint):
 	if DEBUG == "on":
-		print texttoprint
+		print(texttoprint)
 
 
 
