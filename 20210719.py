@@ -671,7 +671,7 @@ class Every_Model_time_mean:
 
 def main():
     # gen_region_point_dic()
-    # get_hb_point()
+    get_hb_point()
     # Every_Model().run()
     # Every_Model_mean().run()
     # Every_Model_time().run()

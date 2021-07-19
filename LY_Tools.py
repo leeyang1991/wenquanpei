@@ -1,72 +1,15 @@
-# coding='utf-8'
-import sys
-version = sys.version_info.major
-assert version == 3, 'Python Version Error'
-from matplotlib import pyplot as plt
-import numpy as np
-from scipy import interpolate
-from scipy import signal
-import time
-import to_raster
-import os
-from osgeo import gdal
-# import ogr, osr
-from tqdm import tqdm
-import datetime
-from scipy import stats, linalg
-import pandas as pd
-import seaborn as sns
-from matplotlib.font_manager import FontProperties
-import copyreg
-from scipy.stats import gaussian_kde as kde
-import matplotlib as mpl
-import multiprocessing
-from multiprocessing.pool import ThreadPool as TPool
-import types
-from scipy.stats import gamma as gam
-import math
-import copy
-import scipy
-import sklearn
-import random
-import h5py
-from netCDF4 import Dataset
-import shutil
-import requests
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import explained_variance_score
-from operator import itemgetter
-from itertools import groupby
-# import RegscorePy
-# from statsmodels.stats.outliers_influence import variance_inflation_factor
-from scipy.stats import f_oneway
-from mpl_toolkits.mplot3d import Axes3D
-import pickle
-from dateutil import relativedelta
-from sklearn.inspection import permutation_importance
-# from statsmodels.stats.outliers_influence import variance_inflation_factor
-from statsmodels.stats.outliers_influence import variance_inflation_factor
-import glob
-import codecs
+# coding=gbk
 
-
-np.seterr('ignore')
-
-def sleep(t=1):
-    time.sleep(t)
-def pause():
-    input('\33[7m'+"PRESS ENTER TO CONTINUE."+'\33[0m')
+from __init__ import *
 
 class Tools:
     '''
-    Â∞èÂ∑•ÂÖ∑
+    –°π§æﬂ
     '''
 
     def __init__(self):
+        # self.this_class_arr = results_root + 'arr/Tools/'
+        # self.mk_dir(self.this_class_arr, force=True)
         pass
 
     def mk_dir(self, dir, force=False):
@@ -134,17 +77,14 @@ class Tools:
         pass
 
     def save_df(self,df,outf):
-        if outf.endswith('.df'):
-            df.to_pickle(outf)
-        else:
-            df.to_pickle(outf + '.df')
+        df.to_pickle(outf)
 
 
     def mask_999999_arr(self,arr):
         arr[arr<-9999]=np.nan
 
     def lonlat_to_address(self,lon, lat):
-        ak = "mziulWyNDGkBdDnFxWDTvELlMSun8Obt"  # ÂèÇÁÖßËá™Â∑±ÁöÑÂ∫îÁî®
+        ak = "mziulWyNDGkBdDnFxWDTvELlMSun8Obt"  # ≤Œ’’◊‘º∫µƒ”¶”√
         url = 'http://api.map.baidu.com/reverse_geocoding/v3/?ak=mziulWyNDGkBdDnFxWDTvELlMSun8Obt&output=json&coordtype=wgs84ll&location=%s,%s' % (
         lat, lon)
         content = requests.get(url).text
@@ -166,7 +106,7 @@ class Tools:
 
 
     def pix_to_address(self, pix):
-        # Âè™ÈÄÇÁî®‰∫éÂçï‰∏™ÂÉèÁ¥†Êü•ÁúãÔºå‰∏çÂèØÂ§ßÈáèforÂæ™ÁéØpixÔºåÂ≠òÂú®Á£ÅÁõòÈáçÂ§çËØªÂÜôÁé∞Ë±°
+        # ÷ª  ”√”⁄µ•∏ˆœÒÀÿ≤Èø¥£¨≤ªø…¥Û¡øfor—≠ª∑pix£¨¥Ê‘⁄¥≈≈Ã÷ÿ∏¥∂¡–¥œ÷œÛ
         outf = self.this_class_arr + 'pix_to_address_history.npy'
         if not os.path.isfile(outf):
             np.save(outf, {0: 0})
@@ -196,7 +136,7 @@ class Tools:
         if len(val) == 0 or np.std(val) == 0:
             return [None]
 
-        # 1„ÄÅÊèíÁº∫Â§±ÂÄº
+        # 1°¢≤Â»± ß÷µ
         x = []
         val_new = []
         flag = 0
@@ -215,7 +155,7 @@ class Tools:
         xi = list(range(len(val)))
         yi = interp(xi)
 
-        # 2„ÄÅÂà©Áî®‰∏âÂÄçsigmaÔºåÂéªÈô§Á¶ªÁæ§ÂÄº
+        # 2°¢¿˚”√»˝±∂sigma£¨»•≥˝¿Î»∫÷µ
         # print(len(yi))
         val_mean = np.mean(yi)
         sigma = np.std(yi)
@@ -225,7 +165,7 @@ class Tools:
         bottom = val_mean - n * sigma
         top = val_mean + n * sigma
 
-        # 3„ÄÅÊèíÁ¶ªÁæ§ÂÄº
+        # 3°¢≤Â¿Î»∫÷µ
         xii = []
         val_new_ii = []
 
@@ -243,11 +183,11 @@ class Tools:
         return yiii
 
     def interp_1d_1(self, val,threshold):
-        # ‰∏çÊèíÁ¶ªÁæ§ÂÄº Âè™ÊèíÁº∫Â§±ÂÄº
+        # ≤ª≤Â¿Î»∫÷µ ÷ª≤Â»± ß÷µ
         if len(val) == 0 or np.std(val) == 0:
             return [None]
 
-        # 1„ÄÅÊèíÁº∫Â§±ÂÄº
+        # 1°¢≤Â»± ß÷µ
         x = []
         val_new = []
         flag = 0
@@ -273,7 +213,7 @@ class Tools:
         if len(val) == 0 or np.std(val) == 0:
             return [None]
 
-        # 1„ÄÅÊèíÁº∫Â§±ÂÄº
+        # 1°¢≤Â»± ß÷µ
         x = []
         val_new = []
         flag = 0
@@ -438,7 +378,7 @@ class Tools:
                 outFeature = ogr.Feature(featureDefn)
                 outFeature.SetGeometry(point)
                 outFeature.SetField('val', inputlist[i][2])
-                # Âä†ÂùêÊ†áÁ≥ª
+                # º”◊¯±Íœµ
                 spatialRef = osr.SpatialReference()
                 spatialRef.ImportFromEPSG(4326)
                 spatialRef.MorphToESRI()
@@ -473,7 +413,7 @@ class Tools:
         sns.palplot(cmap)
 
     def group_consecutive_vals(self,in_list):
-        # ËøûÁª≠ÂÄºÂàÜÁªÑ
+        # ¡¨–¯÷µ∑÷◊È
         ranges = []
         for _, group in groupby(enumerate(in_list), lambda index_item: index_item[0] - index_item[1]):
             group = list(map(itemgetter(1), group))
@@ -483,9 +423,25 @@ class Tools:
                 ranges.append([group[0]])
         return ranges
 
+    def list_dir(self,fdir):
+        '''
+        Mac OS
+        list the names of the files in the directory
+        return sorted files list without '.DS_store'
+        '''
+        list_dir = []
+        for f in sorted(os.listdir(fdir)):
+            if f.startswith('.'):
+                continue
+            list_dir.append(f)
+        return list_dir
+
+        pass
+
+
 class SMOOTH:
     '''
-    ‰∏Ä‰∫õÂπ≥ÊªëÁÆóÊ≥ï
+    “ª–©∆Ωª¨À„∑®
     '''
 
     def __init__(self):
@@ -496,7 +452,7 @@ class SMOOTH:
         if len(val) == 0:
             return [None]
 
-        # 1„ÄÅÊèíÁº∫Â§±ÂÄº
+        # 1°¢≤Â»± ß÷µ
         x = []
         val_new = []
         flag = 0
@@ -513,7 +469,7 @@ class SMOOTH:
         xi = list(range(len(val)))
         yi = interp(xi)
 
-        # 2„ÄÅÂà©Áî®‰∏âÂÄçsigmaÔºåÂéªÈô§Á¶ªÁæ§ÂÄº
+        # 2°¢¿˚”√»˝±∂sigma£¨»•≥˝¿Î»∫÷µ
         # print(len(yi))
         val_mean = np.mean(yi)
         sigma = np.std(yi)
@@ -529,7 +485,7 @@ class SMOOTH:
         # plt.show()
         # print(len(yi))
 
-        # 3„ÄÅÊèíÁ¶ªÁæ§ÂÄº
+        # 3°¢≤Â¿Î»∫÷µ
         xii = []
         val_new_ii = []
 
@@ -556,7 +512,7 @@ class SMOOTH:
 
     def smooth_convolve(self, x, window_len=11, window='hanning'):
         """
-        1dÂç∑ÁßØÊª§Ê≥¢
+        1dæÌª˝¬À≤®
         smooth the data using a window with requested size.
         This method is based on the convolution of a scaled window with the signal.
         The signal is prepared by introducing reflected copies of the signal
@@ -604,8 +560,8 @@ class SMOOTH:
         return y[(window_len // 2 - 1):-(window_len // 2)]
 
     def smooth(self, x):
-        # ÂêéÁ™óÊª§Ê≥¢
-        # ÊªëÂä®Âπ≥Âùá
+        # ∫Û¥∞¬À≤®
+        # ª¨∂Ø∆Ωæ˘
         x = np.array(x)
         temp = 0
         new_x = []
@@ -620,7 +576,7 @@ class SMOOTH:
 
     def smooth_interpolate(self,inx,iny,zoom):
         '''
-        1dÂπ≥ÊªëÂ∑ÆÂÄº
+        1d∆Ωª¨≤Ó÷µ
         :param inlist:
         :return:
         '''
@@ -631,8 +587,8 @@ class SMOOTH:
         return x_new,y_new
 
     def mid_window_smooth(self,x,window=3):
-        # ‰∏≠ÊªëÂä®Á™óÂè£Êª§Ê≥¢
-        # Á™óÂè£‰∏∫Â•áÊï∞
+        # ÷–ª¨∂Ø¥∞ø⁄¬À≤®
+        # ¥∞ø⁄Œ™∆Ê ˝
 
         if window < 0:
             raise IOError('window must be greater than 0')
@@ -673,9 +629,9 @@ class SMOOTH:
         return new_x
 
     def forward_window_smooth(self, x, window=3):
-        # ÂâçÁ™óÊª§Ê≥¢
+        # «∞¥∞¬À≤®
         # window = window-1
-        # ‰∏çÊîπÂèòÊï∞ÊçÆÈïøÂ∫¶
+        # ≤ª∏ƒ±‰ ˝æ›≥§∂»
 
         if window < 0:
             raise IOError('window must be greater than 0')
@@ -733,15 +689,14 @@ class SMOOTH:
 
 class DIC_and_TIF:
     '''
-    Â≠óÂÖ∏ËΩ¨tif
-    tifËΩ¨Â≠óÂÖ∏
+    ◊÷µ‰◊™tif
+    tif◊™◊÷µ‰
     '''
 
     def __init__(self,tif_template=None):
-        self.this_class_arr = results_root + 'arr/DIC_and_TIF/'
-        Tools().mk_dir(self.this_class_arr, force=True)
         if tif_template == None:
-            self.tif_template = this_root + 'conf/tif_template.tif'
+            # self.tif_template = this_root + 'conf/tif_template.tif'
+            raise UserWarning
         else:
             self.tif_template = tif_template
         pass
@@ -883,30 +838,32 @@ class DIC_and_TIF:
         pass
 
     def spatial_tif_to_lon_lat_dic(self):
-        outf = self.this_class_arr + 'pix_to_lon_lat_dic.npy'
-        if os.path.isfile(outf):
-            dic = Tools().load_npy(outf)
-            return dic
-        else:
-            tif_template = self.tif_template
-            arr, originX, originY, pixelWidth, pixelHeight = to_raster.raster2array(tif_template)
-            # print(originX, originY, pixelWidth, pixelHeight)
-            # exit()
-            pix_to_lon_lat_dic = {}
-            for i in tqdm(list(range(len(arr)))):
-                for j in range(len(arr[0])):
-                    pix = (i, j)
-                    lon = originX + pixelWidth * j
-                    lat = originY + pixelHeight * i
-                    pix_to_lon_lat_dic[pix] = [lon, lat]
-            print('saving')
-            np.save(outf, pix_to_lon_lat_dic)
-            return pix_to_lon_lat_dic
+        prefix = self.tif_template.split('/')[-1].split('.')[0]
+        # outf = self.this_class_arr + '{}_pix_to_lon_lat_dic.npy'.format(prefix)
+        # if os.path.isfile(outf):
+        #     dic = Tools().load_npy(outf)
+        #     return dic
+        # else:
+        tif_template = self.tif_template
+        arr, originX, originY, pixelWidth, pixelHeight = to_raster.raster2array(tif_template)
+        # print(originX, originY, pixelWidth, pixelHeight)
+        # exit()
+        pix_to_lon_lat_dic = {}
+        for i in tqdm(list(range(len(arr))),desc='tif_to_lon_lat_dic'):
+            for j in range(len(arr[0])):
+                pix = (i, j)
+                lon = originX + pixelWidth * j
+                lat = originY + pixelHeight * i
+                pix_to_lon_lat_dic[pix] = [lon, lat]
+        # print('saving')
+        # np.save(outf, pix_to_lon_lat_dic)
+        return pix_to_lon_lat_dic
 
 
     def spatial_tif_to_dic(self,tif):
 
         arr = to_raster.raster2array(tif)[0]
+        arr = np.array(arr,dtype=float)
         Tools().mask_999999_arr(arr)
         dic = self.spatial_arr_to_dic(arr)
         return dic
@@ -993,47 +950,6 @@ class DIC_and_TIF:
         # return back_ground
 
         pass
-
-
-    def ascii_to_arr(self,lonlist,latlist,vals):
-        '''
-        transform ascii text to spatial array
-        :param lonlist:[.....]
-        :param latlist: [.....]
-        :param vals: [.....]
-        :return:
-        :todo: need to be modified
-        '''
-        # matrix = np.meshgrid(lonlist,latlist)
-        lons = list(set(lonlist))
-        lats = list(set(latlist))
-        print(lons)
-        lons.sort()
-        lats.sort()
-        lon_matri,lat_matri = np.meshgrid(lons,lats)
-        # print matrix
-        # for i in range(len(lonlist)):
-        #     print type(lonlist[i]),latlist[i],vals[i]
-        #     sleep()
-
-        # lon_lat_dic = dict(np.load(self.this_class_arr + 'pix_to_lon_lat_dic.npy').item())
-        # lon_lat_dic_reverse = {}
-        # for key in lon_lat_dic:
-        #     lon,lat = lon_lat_dic[key]
-        #     new_key = str(lon)+'_'+str(lat)
-        #     print new_key
-        #     sleep()
-        #     lon_lat_dic_reverse[new_key] = key
-
-        # spatial_dic = {}
-        # for i in range(len(lonlist)):
-        #     lt = str(lonlist[i])+'_'+str(latlist[i])
-        #     pix = lon_lat_dic_reverse[lt]
-        #     spatial_dic[pix] = vals[i]
-
-        # arr = self.pix_dic_to_spatial_arr_ascii(spatial_dic)
-        # return arr
-        exit()
 
 
     def mask_ocean_dic(self):
@@ -1190,13 +1106,165 @@ class DIC_and_TIF:
         plt.show()
 
         pass
+    def lon_lat_val_to_tif(self,lon_list,lat_list,val_list,outtif):
+        lonlist_set = list(set(lon_list))
+        latlist_set = list(set(lat_list))
+        lonlist_set.sort()
+        latlist_set.sort()
+        latlist_set = latlist_set[::-1]
+        originX = min(lonlist_set)
+        originY = max(latlist_set)
+        pixelWidth = lonlist_set[1] - lonlist_set[0]
+        pixelHeight = latlist_set[1] - latlist_set[0]
+        spatial_dic = {}
+        for i in range(len(lon_list)):
+            lon = lon_list[i]
+            lat = lat_list[i]
+            val = val_list[i]
+            r = abs(int((lat - originY) / pixelHeight))
+            c = abs(int((lon - originX) / pixelWidth))
+            spatial_dic[(r, c)] = val
+        spatial = []
+        row = abs(int((max(latlist_set) - min(latlist_set)) / pixelHeight))
+        col = abs(int((max(lonlist_set) - min(lonlist_set)) / pixelWidth))
+        for r in range(row):
+            temp = []
+            for c in range(col):
+                key = (r, c)
+                if key in spatial_dic:
+                    val_pix = spatial_dic[key]
+                    temp.append(val_pix)
+                else:
+                    temp.append(np.nan)
+            spatial.append(temp)
+        spatial = np.array(spatial, dtype=float)
+        longitude_start = originX
+        latitude_start = originY
+        to_raster.array2raster(outtif, longitude_start, latitude_start, pixelWidth, pixelHeight, spatial)
 
+
+    def lon_lat_ascii_to_arr(self,lon_list,lat_list,val_list):
+        lonlist_set = list(set(lon_list))
+        latlist_set = list(set(lat_list))
+        lonlist_set.sort()
+        latlist_set.sort()
+        latlist_set = latlist_set[::-1]
+        originX = min(lonlist_set)
+        originY = max(latlist_set)
+        pixelWidth = lonlist_set[1] - lonlist_set[0]
+        pixelHeight = latlist_set[1] - latlist_set[0]
+        spatial_dic = {}
+        for i in range(len(lon_list)):
+            lon = lon_list[i]
+            lat = lat_list[i]
+            val = val_list[i]
+            r = abs(int((lat - originY) / pixelHeight))
+            c = abs(int((lon - originX) / pixelWidth))
+            spatial_dic[(r, c)] = val
+        spatial = []
+        row = abs(int((max(latlist_set) - min(latlist_set)) / pixelHeight))
+        col = abs(int((max(lonlist_set) - min(lonlist_set)) / pixelWidth))
+        for r in range(row):
+            temp = []
+            for c in range(col):
+                key = (r, c)
+                if key in spatial_dic:
+                    val_pix = spatial_dic[key]
+                    temp.append(val_pix)
+                else:
+                    temp.append(None)
+            spatial.append(temp)
+        spatial = np.array(spatial)
+        return spatial
+
+
+    def unify_raster(self, in_tif, out_tif, ndv=-999999.):
+        '''
+        Unify raster to the extend of global (-180 180 90 -90)
+        '''
+        insert_value = ndv
+        array, originX, originY, pixelWidth, pixelHeight = to_raster.raster2array(in_tif)
+        # insert values to row
+        top_line_num = abs((90. - originY) / pixelHeight)
+        bottom_line_num = abs((90. + originY + pixelHeight * len(array)) / pixelHeight)
+        top_line_num = int(round(top_line_num, 0))
+        bottom_line_num = int(round(bottom_line_num, 0))
+        nan_array_insert = np.ones_like(array[0]) * insert_value
+        top_array_insert = []
+        for i in range(top_line_num):
+            top_array_insert.append(nan_array_insert)
+        bottom_array_insert = []
+        for i in range(bottom_line_num):
+            bottom_array_insert.append(nan_array_insert)
+        bottom_array_insert = np.array(bottom_array_insert)
+        if len(top_array_insert) != 0:
+            arr_temp = np.insert(array, obj=0, values=top_array_insert, axis=0)
+        else:
+            arr_temp = array
+        if len(bottom_array_insert) != 0:
+            array_unify_top_bottom = np.vstack((arr_temp, bottom_array_insert))
+        else:
+            array_unify_top_bottom = arr_temp
+
+        # insert values to column
+        left_line_num = abs((-180. - originX) / pixelWidth)
+        right_line_num = abs((180. - (originX + pixelWidth * len(array[0]))) / pixelWidth)
+        left_line_num = int(round(left_line_num, 0))
+        right_line_num = int(round(right_line_num, 0))
+        left_array_insert = []
+        right_array_insert = []
+        for i in range(left_line_num):
+            left_array_insert.append(insert_value)
+        for i in range(right_line_num):
+            right_array_insert.append(insert_value)
+
+        array_unify_left_right = []
+        for i in array_unify_top_bottom:
+            if len(left_array_insert) != 0:
+                arr_temp = np.insert(i, obj=0, values=left_line_num, axis=0)
+            else:
+                arr_temp = i
+            if len(right_array_insert) != 0:
+                array_temp1 = np.hstack((arr_temp, right_array_insert))
+            else:
+                array_temp1 = arr_temp
+            array_unify_left_right.append(array_temp1)
+        array_unify_left_right = np.array(array_unify_left_right)
+        print('{} is unified to the shape of'.format(in_tif), np.shape(array_unify_left_right))
+        newRasterfn = out_tif
+        to_raster.array2raster(newRasterfn, -180, 90, pixelWidth, pixelHeight, array_unify_left_right, ndv=ndv)
+
+
+    def resample_reproj(self,in_tif,out_tif,res,srcSRS='EPSG:4326',dstSRS='EPSG:4326'):
+        dataset = gdal.Open(in_tif)
+        gdal.Warp(out_tif, dataset, xRes=res, yRes=res, srcSRS=srcSRS, dstSRS=dstSRS)
+
+    def gen_srs_from_wkt(self,proj_wkt):
+        '''
+        proj_wkt example:
+        prj_info = PROJCS["Homolosine",
+                GEOGCS["WGS 84",
+                    DATUM["WGS_1984",
+                        SPHEROID["WGS 84",6378137,298.257223563,
+                            AUTHORITY["EPSG","7030"]],
+               AUTHORITY["EPSG","6326"]],
+                    PRIMEM["Greenwich",0,
+                        AUTHORITY["EPSG","8901"]],
+                    UNIT["degree",0.0174532925199433,
+                        AUTHORITY["EPSG","9122"]],
+                    AUTHORITY["EPSG","4326"]],
+                PROJECTION["Interrupted_Goode_Homolosine"],
+                UNIT["Meter",1]]
+        '''
+        inRasterSRS = osr.SpatialReference()
+        inRasterSRS.ImportFromWkt(proj_wkt)
+        return inRasterSRS
 
 class MULTIPROCESS:
     '''
-    ÂèØÂØπÁ±ªÂÜÖÁöÑÂáΩÊï∞ËøõË°åÂ§öËøõÁ®ãÂπ∂Ë°å
-    Áî±‰∫éGILÔºåÂ§öÁ∫øÁ®ãÊó†Ê≥ïË∑ëÊª°CPUÔºåÂØπ‰∫é‰∏çÂç†Áî®CPUÁöÑËÆ°ÁÆóÂáΩÊï∞ÂèØÁî®Â§öÁ∫øÁ®ã
-    Âπ∂Ë°åËÆ°ÁÆóÂä†ÂÖ•ËøõÂ∫¶Êù°
+    ø…∂‘¿‡ƒ⁄µƒ∫Ø ˝Ω¯––∂‡Ω¯≥Ã≤¢––
+    ”…”⁄GIL£¨∂‡œﬂ≥ÃŒﬁ∑®≈‹¬˙CPU£¨∂‘”⁄≤ª’º”√CPUµƒº∆À„∫Ø ˝ø…”√∂‡œﬂ≥Ã
+    ≤¢––º∆À„º”»ÎΩ¯∂»Ãı
     '''
 
     def __init__(self, func, params):
@@ -1213,7 +1281,7 @@ class MULTIPROCESS:
 
     def run(self, process=-9999, process_or_thread='p', **kwargs):
         '''
-        # Âπ∂Ë°åËÆ°ÁÆóÂä†ËøõÂ∫¶Êù°
+        # ≤¢––º∆À„º”Ω¯∂»Ãı
         :param func: input a kenel_function
         :param params: para1,para2,para3... = params
         :param process: number of cpu
@@ -1305,7 +1373,7 @@ class KDE_plot:
 
     def linefit(self,x, y):
         '''
-        ÊúÄÂ∞è‰∫å‰πòÊ≥ïÊãüÂêàÁõ¥Á∫ø
+        ◊Ó–°∂˛≥À∑®ƒ‚∫œ÷±œﬂ
         :param x:
         :param y:
         :return:
@@ -1326,8 +1394,8 @@ class KDE_plot:
 
     def plot_fit_line(self,a,b,r,X,ax=None,title='',is_label=True,is_formula=True,**argvs):
         '''
-        ÁîªÊãüÂêàÁõ¥Á∫ø y=ax+b
-        ÁîªÊï£ÁÇπÂõæ X,Y
+        ª≠ƒ‚∫œ÷±œﬂ y=ax+b
+        ª≠…¢µ„Õº X,Y
         :param a:
         :param b:
         :param X:
@@ -1369,14 +1437,14 @@ class KDE_plot:
                 ax.plot(x,y,linestyle='dashed',c=c,alpha=0.7,label=label,**argvs)
 
 
-    def plot_scatter(self, val1, val2,plot_fit_line=False,max_n=10000,is_plot_1_1_line=False, cmap='magma', reverse=0, s=0.3, title='',ax=None,silent=False,is_KDE=True,**kwargs):
+    def plot_scatter(self, val1, val2,plot_fit_line=False,max_n=10000,is_plot_1_1_line=False, cmap='ocean', reverse=0, s=0.3, title='',ax=None,silent=False,is_KDE=True,**kwargs):
         val1 = np.array(val1)
         val2 = np.array(val2)
         if not silent:
             print('data length is {}'.format(len(val1)))
         if len(val1) > max_n:
             val_range_index = list(range(len(val1)))
-            val_range_index = random.sample(val_range_index, max_n)  # ‰ªéval‰∏≠ÈöèÊú∫ÈÄâÊã©n‰∏™ÁÇπÔºåÁõÆÁöÑÊòØÂä†Âø´Ê†∏ÂØÜÂ∫¶ÁÆóÊ≥ï
+            val_range_index = random.sample(val_range_index, max_n)  # ¥”val÷–ÀÊª˙—°‘Òn∏ˆµ„£¨ƒøµƒ «º”øÏ∫À√‹∂»À„∑®
             new_val1 = []
             new_val2 = []
             for i in val_range_index:
@@ -1437,9 +1505,9 @@ class Pre_Process:
         pass
 
     def data_transform(self, fdir, outdir):
-        # ‰∏çÂèØÂπ∂Ë°åÔºåÂÜÖÂ≠ò‰∏çË∂≥
+        # ≤ªø…≤¢––£¨ƒ⁄¥Ê≤ª◊„
         Tools().mk_dir(outdir)
-        # Â∞ÜÁ©∫Èó¥ÂõæËΩ¨Êç¢‰∏∫Êï∞ÁªÑ
+        # Ω´ø’º‰Õº◊™ªªŒ™ ˝◊È
         # per_pix_data
         flist = os.listdir(fdir)
         date_list = []
@@ -1501,10 +1569,10 @@ class Pre_Process:
 
 
     def data_transform_with_date_list(self, fdir, outdir,date_list):
-        # ‰∏çÂèØÂπ∂Ë°åÔºåÂÜÖÂ≠ò‰∏çË∂≥
+        # ≤ªø…≤¢––£¨ƒ⁄¥Ê≤ª◊„
         Tools().mk_dir(outdir)
         outdir = outdir + '/'
-        # Â∞ÜÁ©∫Èó¥ÂõæËΩ¨Êç¢‰∏∫Êï∞ÁªÑ
+        # Ω´ø’º‰Õº◊™ªªŒ™ ˝◊È
         template_f = os.path.join(fdir,os.listdir(fdir)[0])
         template_arr = to_raster.raster2array(template_f)[0]
         void_arr = np.ones_like(template_arr) * -999999
@@ -1569,7 +1637,7 @@ class Pre_Process:
             vals = pix_dic[pix]
             vals = np.array(vals)
             Tools().mask_999999_arr(vals)
-            # Ê∏ÖÊ¥óÊï∞ÊçÆ
+            # «Âœ¥ ˝æ›
             climatology_means = []
             climatology_std = []
             # vals = signal.detrend(vals)
@@ -1584,7 +1652,7 @@ class Pre_Process:
                 climatology_means.append(mean)
                 climatology_std.append(std)
 
-            # ÁÆóÊ≥ï1
+            # À„∑®1
             # pix_anomaly = {}
             # for m in range(1, 13):
             #     for i in range(len(pix_dic[pix])):
@@ -1602,14 +1670,14 @@ class Pre_Process:
             # anomaly_list = arr.to_list()
             # anomaly_pix_dic[pix] = anomaly_list
 
-            # ÁÆóÊ≥ï2
+            # À„∑®2
             pix_anomaly = []
             for i in range(len(vals)):
                 mon = i % 12
                 std_ = climatology_std[mon]
                 mean_ = climatology_means[mon]
                 if std_ == 0:
-                    anomaly = 0 ##### ‰øÆÊîπgpp
+                    anomaly = 0 ##### –ﬁ∏ƒgpp
                 else:
                     anomaly = (vals[i] - mean_) / std_
 
@@ -1683,6 +1751,47 @@ class Pre_Process:
             Tools().save_npy(dic_detrend,outf)
         pass
 
+
+class Plot_line:
+    def __init__(self):
+
+        pass
+
+    def plot_line_with_gradient_error_band(self,x,y,yerr,color_gradient_n=100,c=None,
+                                           pow=2,min_alpha=0,max_alpha=1,**kwargs):
+        x = np.array(x)
+        y = np.array(y)
+        yerr = np.array(yerr)
+        alpha_range_ = np.linspace(min_alpha, math.pow(max_alpha, int(pow)), int(color_gradient_n / 2))
+        alpha_range_ = alpha_range_ ** pow
+        alpha_range__ = alpha_range_[::-1]
+        alpha_range = np.hstack((alpha_range_, alpha_range__))
+        bottom = []
+        top = []
+        for i in range(len(x)):
+            b = y[i] - yerr[i]
+            t = y[i] + yerr[i]
+            bins_i = np.linspace(b, t, color_gradient_n)
+            bottom_i = []
+            top_i = []
+            for j in range(len(bins_i)):
+                if j + 1 >= len(bins_i):
+                    break
+                bottom_i.append(bins_i[j])
+                top_i.append(bins_i[j + 1])
+            bottom.append(bottom_i)
+            top.append(top_i)
+        bottom = np.array(bottom)
+        top = np.array(top)
+        bottom = bottom.T
+        top = top.T
+        for i in range(color_gradient_n - 1):
+            plt.fill_between(x, bottom[i], top[i], alpha=alpha_range[i], zorder=-99,
+                             color=c, edgecolor=None,**kwargs)
+        pass
+
+
+T = Tools()
 
 def main():
     raise UserWarning('Do not run this script')
